@@ -41,3 +41,4 @@ ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/provenance/marker/v1 ${PROTO_DIR} ${PROTO
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/provenance/metadata/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/provenance/metadata/v1/p8e ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/provenance/name/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}
+${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/provenance/msgfees/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}

@@ -26,6 +26,7 @@ import {
     AttributeModule, 
     MarkerModule, 
     MetadataModule, 
+    MsgFeesModule, 
     NameModule, 
 } from '../modules';
 import { IServiceClient, ServiceClient } from '../proto/cosmos/tx/v1beta1/service_grpc_pb';
@@ -55,6 +56,7 @@ export class ProvenanceClient implements ITxClient {
         this.marker = new MarkerModule(this.provider, this);
         this.metadata = new MetadataModule(this.provider, this);
         this.name = new NameModule(this.provider, this);
+        this.msgFees = new MsgFeesModule(this.provider, this);
     }
 
     /**
@@ -265,5 +267,6 @@ export class ProvenanceClient implements ITxClient {
     public marker: MarkerModule;
     public metadata: MetadataModule;
     public name: NameModule;
+    public msgFees: MsgFeesModule;
 
 }
