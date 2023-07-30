@@ -1,7 +1,7 @@
 import * as google_protobuf_any_pb from 'google-protobuf/google/protobuf/any_pb';
 import * as grpc from 'grpc';
 
-import { BaseRequest } from './BaseRequest';
+import { BaseRequest, DEFAULT_GAS_DENOM } from './BaseRequest';
 import { GasEstimate } from './GasEstimate';
 import { Message } from './Message';
 import { IProvider } from '../providers/IProvider';
@@ -33,6 +33,7 @@ import { IServiceClient, ServiceClient } from '../proto/cosmos/tx/v1beta1/servic
 
 import * as cosmos_tx_v1beta1_service_pb from '../proto/cosmos/tx/v1beta1/service_pb';
 import * as cosmos_tx_v1beta1_tx_pb from '../proto/cosmos/tx/v1beta1/tx_pb';
+import { Coin } from '../proto/cosmos/base/v1beta1/coin_pb';
 
 export class ProvenanceClient implements ITxClient {
 
@@ -132,7 +133,14 @@ export class ProvenanceClient implements ITxClient {
                 if (err != null) {
                     reject(err);
                 } else {
-                    resolve(new GasEstimate(res.getGasInfo().getGasUsed(), baseReq.gasAdjustment));
+                    resolve(
+                        new GasEstimate(
+                            res.getGasInfo().getGasUsed(),
+                            [(new Coin()).setAmount(res.getGasInfo().getGasUsed().toString()).setDenom(DEFAULT_GAS_DENOM)],
+                            [],
+                            baseReq.gasAdjustment
+                        )
+                    );
                 }
             });
         });

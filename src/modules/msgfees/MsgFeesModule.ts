@@ -39,6 +39,8 @@ export class MsgFeesModule {
                     resolve(
                         new GasEstimate(
                             res.getEstimatedGas(),
+                            res.getAdditionalFeesList(),
+                            res.getTotalFeesList(),
                             feeAdjustment,
                         )
                     );

@@ -9,7 +9,7 @@ import * as cosmos_base_v1beta1_coin_pb from '../proto/cosmos/base/v1beta1/coin_
 import * as cosmos_crypto_secp256k1_keys_pb from '../proto/cosmos/crypto/secp256k1/keys_pb';
 import * as cosmos_tx_v1beta1_tx_pb from "../proto/cosmos/tx/v1beta1/tx_pb";
 
-const DEFAULT_GAS_DENOM = 'nhash';
+export const DEFAULT_GAS_DENOM = 'nhash';
 
 export class BaseRequest {
 
@@ -30,7 +30,7 @@ export class BaseRequest {
         this.feeGranter = feeGranter;
     }
 
-    buildAuthInfo(gasEstimate: GasEstimate = new GasEstimate(0)): Promise<cosmos_tx_v1beta1_tx_pb.AuthInfo> {
+    buildAuthInfo(gasEstimate: GasEstimate = new GasEstimate(0, [], [])): Promise<cosmos_tx_v1beta1_tx_pb.AuthInfo> {
         return new Promise<cosmos_tx_v1beta1_tx_pb.AuthInfo>(async (resolve, reject) => {
             try {
                 var signerInfos: cosmos_tx_v1beta1_tx_pb.SignerInfo[] = [];
@@ -59,14 +59,15 @@ export class BaseRequest {
                     }
                 }, Promise.resolve());
 
+                let fee = (new cosmos_tx_v1beta1_tx_pb.Fee())
+                    .setAmountList(gasEstimate.totalFees)
+                    .setGasLimit(gasEstimate.limit);
+                if (this.feeGranter !== undefined) {
+                    fee = fee.setGranter(this.feeGranter);
+                }
+
                 resolve((new cosmos_tx_v1beta1_tx_pb.AuthInfo())
-                    .setFee((new cosmos_tx_v1beta1_tx_pb.Fee())
-                        .setAmountList([(new cosmos_base_v1beta1_coin_pb.Coin())
-                            .setAmount(gasEstimate.fees.toString())
-                            .setDenom(DEFAULT_GAS_DENOM)
-                        ])
-                        .setGasLimit(gasEstimate.limit)
-                    )
+                    .setFee(fee)
                     .setSignerInfosList(signerInfos)
                 );
             } catch (ex) {
@@ -121,8 +122,7 @@ export class BaseRequest {
     public body: cosmos_tx_v1beta1_tx_pb.TxBody;
     public signers: Key[];
     public signerSequenceOffsets?: number[];
-    public gasAdjustment?: number;
-    public feeGranter?: string;
+    public gasAdjustment?: number;    public feeGranter?: string;
 
     private readonly provider: IProvider;
 
