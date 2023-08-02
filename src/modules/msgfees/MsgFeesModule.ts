@@ -36,6 +36,8 @@ export class MsgFeesModule {
                 if (err != null) {
                     reject(err);
                 } else {
+                    console.log("calculateTxFees.res")
+                    console.log(JSON.stringify(res));
                     resolve(
                         new GasEstimate(
                             res.getEstimatedGas(),
