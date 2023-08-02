@@ -34,6 +34,7 @@ import { IServiceClient, ServiceClient } from '../proto/cosmos/tx/v1beta1/servic
 import * as cosmos_tx_v1beta1_service_pb from '../proto/cosmos/tx/v1beta1/service_pb';
 import * as cosmos_tx_v1beta1_tx_pb from '../proto/cosmos/tx/v1beta1/tx_pb';
 import { Coin } from '../proto/cosmos/base/v1beta1/coin_pb';
+import { DefaultGasPriceProvider, GasPriceProvider } from '../providers';
 
 export class ProvenanceClient implements ITxClient {
 
@@ -41,10 +42,15 @@ export class ProvenanceClient implements ITxClient {
      * Constructor.
      * @param provider The provenance node network provider.
      */
-    constructor(provider: IProvider) {
+    constructor(provider: IProvider, gasPriceProvider?: GasPriceProvider) {
         ProvenanceClient.singleton = this;
 
         this.provider = provider;
+        if (gasPriceProvider === undefined) {
+            this.gasPriceProvider = gasPriceProvider;
+        } else {
+            this.gasPriceProvider = new DefaultGasPriceProvider();
+        }
         this.txClient = new ServiceClient(this.provider.network.uri.toString(), grpc.credentials.createInsecure());
 
         // core modules
@@ -263,6 +269,7 @@ export class ProvenanceClient implements ITxClient {
     private static singleton: ProvenanceClient;
 
     private readonly provider: IProvider;
+    private readonly gasPriceProvider: GasPriceProvider;
     private readonly txClient: IServiceClient;
 
     // core modules

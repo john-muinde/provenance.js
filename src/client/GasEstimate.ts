@@ -1,7 +1,7 @@
 import { Coin } from "../proto/cosmos/base/v1beta1/coin_pb";
+import { GasPriceProvider } from "../providers";
 
 const DEFAULT_FEE_ADJUSTMENT = 1.25;
-const DEFAULT_GAS_PRICE = 1905.00;
 
 export class GasEstimate {
 
@@ -16,13 +16,15 @@ export class GasEstimate {
         }
 
         this.limit = Math.ceil(this.estimate * this.adjustment);
-        this.fees = Math.ceil(this.limit * DEFAULT_GAS_PRICE);
+    }
+
+    async getFees(provider: GasPriceProvider): Promise<number> {
+        return await provider.gasPrice;
     }
 
     public estimate: number;
     public feeAdjustment?: number = DEFAULT_FEE_ADJUSTMENT;
     public limit: number;
-    public fees: number;
     public totalFees: Coin[];
     public additionalFees: Coin[];
 
