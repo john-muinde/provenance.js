@@ -5,7 +5,7 @@ const DEFAULT_GAS_PRICE = 1905.00;
 
 export class GasEstimate {
 
-    constructor(estimate: number, totalFees: Coin[], additionalFees: Coin[], feeAdjustment?: number) {
+    constructor(estimate: number, additionalFees: Coin[], totalFees: Coin[], feeAdjustment?: number) {
         this.estimate = estimate;
         this.totalFees = totalFees;
         this.additionalFees = additionalFees;
