@@ -7,9 +7,10 @@ export class GasEstimate {
 
     constructor(estimate: number, totalFees: Coin[], additionalFees: Coin[], feeAdjustment?: number) {
         this.estimate = estimate;
-        this.feeAdjustment = feeAdjustment;
+        this.totalFees = totalFees;
         this.additionalFees = additionalFees;
 
+        this.feeAdjustment = feeAdjustment;
         if (typeof this.feeAdjustment !== 'undefined') {
             this.adjustment = this.feeAdjustment;
         }
