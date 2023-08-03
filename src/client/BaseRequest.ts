@@ -1,6 +1,6 @@
 import { AuthInfo, SignMode } from '../types';
 import { AuthCore } from '../core';
-import { GasEstimate } from './GasEstimate';
+import { EmptyGasEstimate, GasEstimate } from './GasEstimate';
 import { messageToAny } from '../utils/MessageUtils';
 import { Key } from '../wallet/Key';
 import { IProvider } from '../providers/IProvider';
@@ -30,7 +30,7 @@ export class BaseRequest {
         this.feeGranter = feeGranter;
     }
 
-    buildAuthInfo(gasEstimate: GasEstimate = new GasEstimate(0, [], [])): Promise<cosmos_tx_v1beta1_tx_pb.AuthInfo> {
+    buildAuthInfo(gasEstimate: GasEstimate = new EmptyGasEstimate()): Promise<cosmos_tx_v1beta1_tx_pb.AuthInfo> {
         return new Promise<cosmos_tx_v1beta1_tx_pb.AuthInfo>(async (resolve, reject) => {
             try {
                 var signerInfos: cosmos_tx_v1beta1_tx_pb.SignerInfo[] = [];

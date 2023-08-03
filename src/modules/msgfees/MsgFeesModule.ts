@@ -2,7 +2,8 @@ import * as grpc from 'grpc';
 
 import { 
     ITxClient,
-    GasEstimate, 
+    GasEstimate,
+    CalculateTxGasEstimate, 
 } from '../../client';
 import { IProvider } from '../../providers/IProvider';
 
@@ -42,7 +43,7 @@ export class MsgFeesModule {
                     console.log("calculateTxFees.res")
                     console.log(JSON.stringify(res.toObject()));
                     resolve(
-                        new GasEstimate(
+                        new CalculateTxGasEstimate(
                             res.getEstimatedGas(),
                             res.getAdditionalFeesList(),
                             res.getTotalFeesList(),

@@ -1,8 +1,8 @@
 import * as google_protobuf_any_pb from 'google-protobuf/google/protobuf/any_pb';
 import * as grpc from 'grpc';
 
-import { BaseRequest, DEFAULT_GAS_DENOM } from './BaseRequest';
-import { GasEstimate } from './GasEstimate';
+import { BaseRequest } from './BaseRequest';
+import { GasEstimate, SimulationGasEstimate } from './GasEstimate';
 import { Message } from './Message';
 import { IProvider } from '../providers/IProvider';
 import {
@@ -140,12 +140,7 @@ export class ProvenanceClient implements ITxClient {
                     reject(err);
                 } else {
                     resolve(
-                        new GasEstimate(
-                            res.getGasInfo().getGasUsed(),
-                            [(new Coin()).setAmount(res.getGasInfo().getGasUsed().toString()).setDenom(DEFAULT_GAS_DENOM)],
-                            [],
-                            baseReq.gasAdjustment
-                        )
+                        new SimulationGasEstimate(res.getGasInfo().getGasUsed(), baseReq.gasAdjustment)
                     );
                 }
             });
