@@ -111,8 +111,8 @@ export class ProvenanceClient implements ITxClient {
      * @param baseReq ???
      * @returns ???
      */
-    estimateTx(baseReq: BaseRequest): Promise<GasEstimate> {
-        return new Promise<GasEstimate> (async (resolve, reject) => {
+    estimateTx(baseReq: BaseRequest): Promise<SimulationGasEstimate> {
+        return new Promise<SimulationGasEstimate> (async (resolve, reject) => {
             const tx = (new cosmos_tx_v1beta1_tx_pb.Tx())
                 .setBody(baseReq.body)
                 .setAuthInfo(await baseReq.buildAuthInfo());

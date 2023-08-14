@@ -25,8 +25,8 @@ export class MsgFeesModule {
     //----------------------------------------------------------------------------------------------------------------------------------------------
 
     // Reverse lookup of all names bound to a given address
-    calculateTxFees(txBytes: Uint8Array, adjustment?: number): Promise<GasEstimate> {
-        return new Promise<GasEstimate> ((resolve, reject) => {
+    calculateTxFees(txBytes: Uint8Array, adjustment?: number): Promise<CalculateTxGasEstimate> {
+        return new Promise<CalculateTxGasEstimate> ((resolve, reject) => {
             let feeAdjustment = adjustment || DEFAULT_FEE_ADJUSTMENT;
             let req = new CalculateTxFeesRequest()
                 .setTxBytes(txBytes)
