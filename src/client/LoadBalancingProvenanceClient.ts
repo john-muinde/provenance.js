@@ -16,15 +16,7 @@ export class LoadBalancingProvenanceClient implements IPbClient {
     }
 
     getAndExecute<T>(fun: (client: ProvenanceClient) => T): T {
-        let client = this.balancer.get();
-        try {
-            let result = fun(client);
-            this.balancer.handleSuccess(client);
-            return result;
-        } catch (e) { 
-            this.balancer.handleFailure(client, e);
-            throw e
-        }
+        return this.balancer.getAndExecute(fun);
     }
 
     constructWith(messages: Message[], signerArg: SignerArgument): BaseRequest {

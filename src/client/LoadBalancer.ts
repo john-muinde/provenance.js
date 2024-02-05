@@ -5,7 +5,6 @@ export enum LoadBalancerStrategy {
     ROUND_ROBIN = "ROUND_ROBIN",
     RANDOM = "RANDOM"
 };
-
 export interface ILoadBalancer<T> {
     records: T[];
     
@@ -14,6 +13,45 @@ export interface ILoadBalancer<T> {
     handleSuccess(record: T)
 
     handleFailure(record: T, e: Error)
+
+    getAndExecute<R>(fun: (record: T) => R): R
+
+}
+
+interface LoadBalancerProps<T> {
+    records: T[];
+};
+export abstract class AbstractLoadBalancer<T> implements ILoadBalancer<T> {
+    records: T[];
+
+    constructor(props: LoadBalancerProps<T>) {
+        if (props.records.length === 0) {
+            throw new Error("Expected at least 1 record");
+        }
+        this.records = props.records;
+    }
+
+    abstract get(): T
+
+    handleSuccess(record: T) {
+        // Override if necessary
+    }
+
+    handleFailure(record: T, e: Error) {
+        // Override if necessary
+    }
+
+    getAndExecute<R>(fun: (record: T) => R): R {
+        let record = this.get();
+        try {
+            let result = fun(record);
+            this.handleSuccess(record);
+            return result;
+        } catch (e) { 
+            this.handleFailure(record, e);
+            throw e
+        }
+    }
 }
 
 interface Failure {
@@ -21,19 +59,19 @@ interface Failure {
     nextAttemptEpochMillis: number;
 }
 
-export class FallbackLoadBalancer<T> implements ILoadBalancer<T> {
+interface FallbackLoadBalancerProps<T> extends LoadBalancerProps<T> {
+    backoffStrategy?: BackoffStrategy;
+}
+export class FallbackLoadBalancer<T> extends AbstractLoadBalancer<T> {
     records: T[];
     private failures: Failure[];
     private backoff: BackoffStrategy;
 
-    constructor(records: T[], backoffStrategy?: BackoffStrategy) {
-        if (records.length === 0) {
-            throw new Error("Expected at least 1 record");
-        }
+    constructor(props: FallbackLoadBalancerProps<T>) {
+        super(props);
 
-        this.records = records;
-        this.failures = records.map(r => { return { errors: [], nextAttemptEpochMillis: 0 }});
-        this.backoff = backoffStrategy || new DefaultBackoffStrategy({ waitTimeMillis: 2000 });
+        this.failures = this.records.map(r => { return { errors: [], nextAttemptEpochMillis: 0 }});
+        this.backoff = props.backoffStrategy || new DefaultBackoffStrategy({ waitTimeMillis: 2000 });
     }
 
     get(): T {
@@ -73,15 +111,12 @@ export class FallbackLoadBalancer<T> implements ILoadBalancer<T> {
     }
 }
 
-export class RoundRobinLoadBalancer<T> implements ILoadBalancer<T> {
+export class RoundRobinLoadBalancer<T> extends AbstractLoadBalancer<T> {
     records: T[];
     private nextIndex: number;
 
-    constructor(records: T[]) {
-        if (records.length === 0) {
-            throw new Error("Expected at least 1 record");
-        }
-        this.records = records;
+    constructor(props: LoadBalancerProps<T>) {
+        super(props);
         this.nextIndex = 0;
     }
 
@@ -98,15 +133,8 @@ export class RoundRobinLoadBalancer<T> implements ILoadBalancer<T> {
     }
 }
 
-export class RandomLoadBalancer<T> implements ILoadBalancer<T> {
+export class RandomLoadBalancer<T> extends AbstractLoadBalancer<T> {
     records: T[];
-
-    constructor(records: T[]) {
-        if (records.length === 0) {
-            throw new Error("Expected at least 1 record");
-        }
-        this.records = records;
-    }
 
     get(): T {
         let indexToReturn = Math.floor(Math.random() * this.records.length);
