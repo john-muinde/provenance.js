@@ -5,6 +5,7 @@ export * from './GasEstimate';
 export * from './IQueryClient';
 export * from './IPbClient';
 export * from './ITxClient';
+export * from './LoadBalancer';
 export * from './LoadBalancingProvenanceClient';
 export * from './Message';
 export * from './ProvenanceClient';
