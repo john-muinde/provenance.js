@@ -8,7 +8,6 @@ import { IProvider } from '../providers/IProvider';
 import {
     ConstructArgument, 
     EstimateFunction, 
-    ITxClient, 
     SignerArgument, 
 } from './ITxClient';
 import { 
@@ -33,10 +32,10 @@ import { IServiceClient, ServiceClient } from '../proto/cosmos/tx/v1beta1/servic
 
 import * as cosmos_tx_v1beta1_service_pb from '../proto/cosmos/tx/v1beta1/service_pb';
 import * as cosmos_tx_v1beta1_tx_pb from '../proto/cosmos/tx/v1beta1/tx_pb';
-import { Coin } from '../proto/cosmos/base/v1beta1/coin_pb';
 import { DefaultGasPriceProvider, GasPriceProvider } from '../providers';
+import { IPbClient } from './IPbClient';
 
-export class ProvenanceClient implements ITxClient {
+export class ProvenanceClient implements IPbClient {
 
     /**
      * Constructor.

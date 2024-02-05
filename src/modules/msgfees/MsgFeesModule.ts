@@ -32,16 +32,11 @@ export class MsgFeesModule {
                 .setTxBytes(txBytes)
                 .setGasAdjustment(feeAdjustment);
 
-            console.log("calculateTxFees.req")
-            console.log(JSON.stringify(req.toObject()));
-
             // TODO: Move GRPC unary call to the provider
             this.queryClient.calculateTxFees(req, (err, res) => {
                 if (err != null) {
                     reject(err);
                 } else {
-                    console.log("calculateTxFees.res")
-                    console.log(JSON.stringify(res.toObject()));
                     resolve(
                         new CalculateTxGasEstimate(
                             res.getEstimatedGas(),
