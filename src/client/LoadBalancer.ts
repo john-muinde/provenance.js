@@ -11,6 +11,8 @@ export interface ILoadBalancer<T> {
     
     get(): T
 
+    handleSuccess(record: T)
+
     handleFailure(record: T, e: Error)
 }
 
@@ -19,7 +21,7 @@ interface Failure {
     nextAttemptEpochMillis: number;
 }
 
-export class FallBackLoadBalancer<T> implements ILoadBalancer<T> {
+export class FallbackLoadBalancer<T> implements ILoadBalancer<T> {
     records: T[];
     private failures: Failure[];
     private backoff: BackoffStrategy;
@@ -41,6 +43,16 @@ export class FallBackLoadBalancer<T> implements ILoadBalancer<T> {
         } else {
             return this.records[recordIndex];
         }
+    }
+
+    handleSuccess(record: T) {
+        let failedRecordIndex = this.records.indexOf(record);
+        if (failedRecordIndex < 0) {
+            return;
+        }
+
+        this.failures[failedRecordIndex].errors = [];
+        this.failures[failedRecordIndex].nextAttemptEpochMillis = Date.now();
     }
 
     handleFailure(record: T, e: Error) {
@@ -79,6 +91,8 @@ export class RoundRobinLoadBalancer<T> implements ILoadBalancer<T> {
         return this.records[indexToReturn];
     }
 
+    handleSuccess(record: T) {}
+
     handleFailure(record: T, e: Error) {
         // TODO? no-op
     }
@@ -98,6 +112,8 @@ export class RandomLoadBalancer<T> implements ILoadBalancer<T> {
         let indexToReturn = Math.floor(Math.random() * this.records.length);
         return this.records[indexToReturn];
     }
+
+    handleSuccess(record: T) {}
 
     handleFailure(record: T, e: Error) {
         // TODO? no-op

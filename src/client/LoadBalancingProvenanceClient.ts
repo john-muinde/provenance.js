@@ -4,7 +4,7 @@ import { ILoadBalancer } from './LoadBalancer';
 import { AuthCore, BankCore, WasmCore } from '../core';
 
 export class LoadBalancingProvenanceClient implements IPbClient {
-    private balancer: ILoadBalancer<ProvenanceClient>;
+    balancer: ILoadBalancer<ProvenanceClient>;
 
     constructor(balancer: ILoadBalancer<ProvenanceClient>) {
         this.balancer = balancer;
@@ -15,32 +15,44 @@ export class LoadBalancingProvenanceClient implements IPbClient {
         return this.balancer.get();
     }
 
+    getAndExecute<T>(fun: (client: ProvenanceClient) => T): T {
+        let client = this.balancer.get();
+        try {
+            let result = fun(client);
+            this.balancer.handleSuccess(client);
+            return result;
+        } catch (e) { 
+            this.balancer.handleFailure(client, e);
+            throw e
+        }
+    }
+
     constructWith(messages: Message[], signerArg: SignerArgument): BaseRequest {
-        return this.get().constructWith(messages, signerArg);
+        return this.getAndExecute(client => client.constructWith(messages, signerArg));
     }
 
     construct(constructArg: ConstructArgument, signers: SignerArgument): Promise<BaseRequest> {
-        return this.get().construct(constructArg, signers);
+        return this.getAndExecute(client => client.construct(constructArg, signers));
     }
 
     constructAndEstimateTx(constructArg: ConstructArgument, signers: SignerArgument): Promise<GasEstimate> {
-        return this.get().constructAndEstimateTx(constructArg, signers);
+        return this.getAndExecute(client => client.constructAndEstimateTx(constructArg, signers));
     }
 
     constructAndBroadcastTx(constructArg: ConstructArgument, gasEstimate: GasEstimate, signers: SignerArgument, mode: BroadcastMode): Promise<TxResponse.AsObject> {
-        return this.get().constructAndBroadcastTx(constructArg, gasEstimate, signers, mode);
+        return this.getAndExecute(client => client.constructAndBroadcastTx(constructArg, gasEstimate, signers, mode));
     }
 
     constructEstimateAndBroadcastTx(constructArg: ConstructArgument, estimateCallback: EstimateFunction, signers: SignerArgument, mode: BroadcastMode): Promise<TxResponse.AsObject> {
-        return this.get().constructEstimateAndBroadcastTx(constructArg, estimateCallback, signers, mode);
+        return this.getAndExecute(client => client.constructEstimateAndBroadcastTx(constructArg, estimateCallback, signers, mode));
     }
 
     broadcastTx(baseReq: BaseRequest, gasEstimate: GasEstimate, mode: BroadcastMode): Promise<TxResponse.AsObject> {
-        return this.get().broadcastTx(baseReq, gasEstimate, mode);
+        return this.getAndExecute(client => client.broadcastTx(baseReq, gasEstimate, mode));
     }
 
     estimateTx(baseReq: BaseRequest): Promise<GasEstimate> {
-        return this.get().estimateTx(baseReq);
+        return this.getAndExecute(client => client.estimateTx(baseReq));
     }
 
     public get auth(): AuthCore {
