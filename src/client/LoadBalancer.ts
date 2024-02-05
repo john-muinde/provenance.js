@@ -1,4 +1,3 @@
-import { ProvenanceClient } from "../client/ProvenanceClient";
 import { BackoffStrategy, DefaultBackoffStrategy } from "../utils";
 
 export enum LoadBalancerStrategy {
@@ -20,12 +19,12 @@ interface Failure {
     nextAttemptEpochMillis: number;
 }
 
-export class FallBackLoadBalancer implements ILoadBalancer<ProvenanceClient> {
-    records: ProvenanceClient[];
+export class FallBackLoadBalancer<T> implements ILoadBalancer<T> {
+    records: T[];
     private failures: Failure[];
     private backoff: BackoffStrategy;
 
-    constructor(records: ProvenanceClient[], backoffStrategy?: BackoffStrategy) {
+    constructor(records: T[], backoffStrategy?: BackoffStrategy) {
         if (records.length === 0) {
             throw new Error("Expected at least 1 record");
         }
@@ -35,7 +34,7 @@ export class FallBackLoadBalancer implements ILoadBalancer<ProvenanceClient> {
         this.backoff = backoffStrategy || new DefaultBackoffStrategy({ waitTimeMillis: 2000 });
     }
 
-    get(): ProvenanceClient {
+    get(): T {
         let recordIndex: number = this.failures.findIndex(r => r.nextAttemptEpochMillis);
         if (recordIndex < 0) {
             return this.records[0];
@@ -44,7 +43,7 @@ export class FallBackLoadBalancer implements ILoadBalancer<ProvenanceClient> {
         }
     }
 
-    handleFailure(record: ProvenanceClient, e: Error) {
+    handleFailure(record: T, e: Error) {
         let failedRecordIndex = this.records.indexOf(record);
         if (failedRecordIndex < 0) {
             return;
@@ -62,11 +61,11 @@ export class FallBackLoadBalancer implements ILoadBalancer<ProvenanceClient> {
     }
 }
 
-export class RoundRobinLoadBalancer implements ILoadBalancer<ProvenanceClient> {
-    records: ProvenanceClient[];
+export class RoundRobinLoadBalancer<T> implements ILoadBalancer<T> {
+    records: T[];
     private nextIndex: number;
 
-    constructor(records: ProvenanceClient[]) {
+    constructor(records: T[]) {
         if (records.length === 0) {
             throw new Error("Expected at least 1 record");
         }
@@ -74,33 +73,33 @@ export class RoundRobinLoadBalancer implements ILoadBalancer<ProvenanceClient> {
         this.nextIndex = 0;
     }
 
-    get(): ProvenanceClient {
+    get(): T {
         let indexToReturn = this.nextIndex;
         this.nextIndex = (this.nextIndex + 1) % this.records.length;
         return this.records[indexToReturn];
     }
 
-    handleFailure(record: ProvenanceClient, e: Error) {
+    handleFailure(record: T, e: Error) {
         // TODO? no-op
     }
 }
 
-export class RandomLoadBalancer implements ILoadBalancer<ProvenanceClient> {
-    records: ProvenanceClient[];
+export class RandomLoadBalancer<T> implements ILoadBalancer<T> {
+    records: T[];
 
-    constructor(records: ProvenanceClient[]) {
+    constructor(records: T[]) {
         if (records.length === 0) {
             throw new Error("Expected at least 1 record");
         }
         this.records = records;
     }
 
-    get(): ProvenanceClient {
+    get(): T {
         let indexToReturn = Math.floor(Math.random() * this.records.length);
         return this.records[indexToReturn];
     }
 
-    handleFailure(record: ProvenanceClient, e: Error) {
+    handleFailure(record: T, e: Error) {
         // TODO? no-op
     }
 }
