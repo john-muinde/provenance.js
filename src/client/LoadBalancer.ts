@@ -75,7 +75,7 @@ export class FallbackLoadBalancer<T> extends AbstractLoadBalancer<T> {
     }
 
     get(): T {
-        let recordIndex: number = this.failures.findIndex(r => r.nextAttemptEpochMillis);
+        let recordIndex: number = this.failures.findIndex(r => r.nextAttemptEpochMillis < Date.now());
         if (recordIndex < 0) {
             return this.records[0];
         } else {
