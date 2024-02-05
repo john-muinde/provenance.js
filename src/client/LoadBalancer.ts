@@ -67,6 +67,9 @@ export class RoundRobinLoadBalancer implements ILoadBalancer<ProvenanceClient> {
     private nextIndex: number;
 
     constructor(records: ProvenanceClient[]) {
+        if (records.length === 0) {
+            throw new Error("Expected at least 1 record");
+        }
         this.records = records;
         this.nextIndex = 0;
     }
@@ -86,6 +89,9 @@ export class RandomLoadBalancer implements ILoadBalancer<ProvenanceClient> {
     records: ProvenanceClient[];
 
     constructor(records: ProvenanceClient[]) {
+        if (records.length === 0) {
+            throw new Error("Expected at least 1 record");
+        }
         this.records = records;
     }
 
