@@ -260,6 +260,13 @@ export class ProvenanceClient implements IPbClient {
         return ProvenanceClient.singleton;
     }
 
+    public static buildClientList(
+        providers: IProvider[],
+        gasPriceProvider?: GasPriceProvider,
+    ): ProvenanceClient[] {
+        return providers.map(provider => new ProvenanceClient(provider, gasPriceProvider));
+    }
+
     private static singleton: ProvenanceClient;
 
     private readonly provider: IProvider;

@@ -1,20 +1,13 @@
-import { GasPriceProvider, IProvider } from '../providers';
 import { AttributeModule, BaseRequest, BroadcastMode, ConstructArgument, EstimateFunction, GasEstimate, IPbClient, MarkerModule, Message, MetadataModule, MsgFeesModule, NameModule, ProvenanceClient, SignerArgument } from '..';
 import { TxResponse } from '../proto/cosmos/base/abci/v1beta1/abci_pb';
-import { ILoadBalancer, RoundRobinLoadBalancer } from './LoadBalancer';
+import { ILoadBalancer } from './LoadBalancer';
 import { AuthCore, BankCore, WasmCore } from '../core';
 
 export class LoadBalancingProvenanceClient implements IPbClient {
-    private clients: ProvenanceClient[];
     private balancer: ILoadBalancer<ProvenanceClient>;
 
-    constructor(
-        providers: IProvider[],
-        gasPriceProvider?: GasPriceProvider,
-        balancer?: ILoadBalancer<ProvenanceClient>
-    ) {
-        this.clients = providers.map(p => new ProvenanceClient(p, gasPriceProvider));
-        this.balancer = balancer || new RoundRobinLoadBalancer(this.clients);
+    constructor(balancer: ILoadBalancer<ProvenanceClient>) {
+        this.balancer = balancer;
     }
 
     // TODO: make this private?
