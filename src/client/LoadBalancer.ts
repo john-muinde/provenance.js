@@ -43,15 +43,33 @@ export abstract class AbstractLoadBalancer<T> implements ILoadBalancer<T> {
 
     getAndExecute<R>(fun: (record: T) => R): R {
         let record = this.get();
+        console.log("getAndExecute");
+        console.log(record);
         try {
             let result = fun(record);
             this.handleSuccess(record);
+            console.log("SUCCEEDED");
+            console.log(result);
             return result;
         } catch (e) { 
+            console.error("FAILED");
+            console.error(e);
             this.handleFailure(record, e);
             throw e
         }
     }
+
+    // async getAndExecute<R>(fun: (record: T) => R): Promise<R> {
+    //     let record = this.get();
+    //     try {
+    //         let result = await fun(record);
+    //         this.handleSuccess(record);
+    //         return result;
+    //     } catch (e) { 
+    //         this.handleFailure(record, e);
+    //         throw e
+    //     }
+    // }
 }
 
 interface Failure {
@@ -86,19 +104,26 @@ export class FallbackLoadBalancer<T> extends AbstractLoadBalancer<T> {
     handleSuccess(record: T) {
         let failedRecordIndex = this.records.indexOf(record);
         if (failedRecordIndex < 0) {
+            console.log("HERE OOF");
             return;
         }
 
         this.failures[failedRecordIndex].errors = [];
         this.failures[failedRecordIndex].nextAttemptEpochMillis = Date.now();
+        
+        console.log("FAILURES");
+        console.log(this.failures[failedRecordIndex]);
     }
 
     handleFailure(record: T, e: Error) {
         let failedRecordIndex = this.records.indexOf(record);
+        console.error("ERRORS");
         if (failedRecordIndex < 0) {
+            console.error(failedRecordIndex);
             return;
         }
 
+        console.error(this.failures[failedRecordIndex]);
         this.failures[failedRecordIndex].errors.push(e);
         let errorCount = this.failures[failedRecordIndex].errors.length;
 

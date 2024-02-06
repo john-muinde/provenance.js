@@ -269,9 +269,10 @@ export class ProvenanceClient implements IPbClient {
 
     private static singleton: ProvenanceClient;
 
-    private readonly provider: IProvider;
     private readonly gasPriceProvider: GasPriceProvider;
     private readonly txClient: IServiceClient;
+    
+    public readonly provider: IProvider; // TODO Make private again?
 
     // core modules
     public auth: AuthCore;
