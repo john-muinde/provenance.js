@@ -19,6 +19,10 @@ export class LoadBalancingProvenanceClient implements IPbClient {
         return this.balancer.getAndExecute(fun);
     }
 
+    async getAndExecuteAsync<T>(fun: (client: ProvenanceClient) => T): Promise<T> {
+        return await this.balancer.getAndExecuteAsync(fun);
+    }
+
     constructWith(messages: Message[], signerArg: SignerArgument): BaseRequest {
         return this.getAndExecute(client => client.constructWith(messages, signerArg));
     }

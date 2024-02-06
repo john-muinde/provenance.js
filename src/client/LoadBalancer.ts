@@ -16,6 +16,7 @@ export interface ILoadBalancer<T> {
 
     getAndExecute<R>(fun: (record: T) => R): R
 
+    getAndExecuteAsync<R>(fun: (record: T) => R): Promise<R>
 }
 
 interface LoadBalancerProps<T> {
