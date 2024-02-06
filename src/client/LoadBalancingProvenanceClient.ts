@@ -3,11 +3,18 @@ import { TxResponse } from '../proto/cosmos/base/abci/v1beta1/abci_pb';
 import { ILoadBalancer } from './LoadBalancer';
 import { AuthCore, BankCore, WasmCore } from '../core';
 
+interface LoadBalancingProvenanceClientProps {
+    balancer: ILoadBalancer<ProvenanceClient>;
+    maxRetryAttempts?: number;
+}
+
 export class LoadBalancingProvenanceClient implements IPbClient {
     balancer: ILoadBalancer<ProvenanceClient>;
+    maxRetryAttempts: number;
 
-    constructor(balancer: ILoadBalancer<ProvenanceClient>) {
-        this.balancer = balancer;
+    constructor(props: LoadBalancingProvenanceClientProps) {
+        this.balancer = props.balancer;
+        this.maxRetryAttempts = props.maxRetryAttempts || 3;
     }
 
     // TODO: make this private?
@@ -23,32 +30,58 @@ export class LoadBalancingProvenanceClient implements IPbClient {
         return await this.balancer.getAndExecuteAsync(fun);
     }
 
+    getAndExecuteWithRetry<T>(fun: (client: ProvenanceClient) => T): T {
+        for (let i = 0; i < this.maxRetryAttempts; i++) {
+            try {
+                return this.getAndExecute(fun);
+            } catch (e) {
+                if (i < (this.maxRetryAttempts - 1)) {
+                    continue;
+                }
+                throw e;
+            }
+        }
+    }
+
+    async getAndExecuteAsyncWithRetry<T>(fun: (client: ProvenanceClient) => Promise<T>): Promise<T> {
+        for (let i = 0; i < this.maxRetryAttempts; i++) {
+            try {
+                return await this.getAndExecuteAsync(fun);
+            } catch (e) {
+                if (i < (this.maxRetryAttempts - 1)) {
+                    continue;
+                }
+                throw e;
+            }
+        }
+    }
+
     constructWith(messages: Message[], signerArg: SignerArgument): BaseRequest {
         return this.getAndExecute(client => client.constructWith(messages, signerArg));
     }
 
     construct(constructArg: ConstructArgument, signers: SignerArgument): Promise<BaseRequest> {
-        return this.getAndExecute(client => client.construct(constructArg, signers));
+        return this.getAndExecuteAsync(async client => await client.construct(constructArg, signers));
     }
 
     constructAndEstimateTx(constructArg: ConstructArgument, signers: SignerArgument): Promise<GasEstimate> {
-        return this.getAndExecute(client => client.constructAndEstimateTx(constructArg, signers));
+        return this.getAndExecuteAsync(async client => await client.constructAndEstimateTx(constructArg, signers));
     }
 
     constructAndBroadcastTx(constructArg: ConstructArgument, gasEstimate: GasEstimate, signers: SignerArgument, mode: BroadcastMode): Promise<TxResponse.AsObject> {
-        return this.getAndExecute(client => client.constructAndBroadcastTx(constructArg, gasEstimate, signers, mode));
+        return this.getAndExecuteAsync(async client => await client.constructAndBroadcastTx(constructArg, gasEstimate, signers, mode));
     }
 
     constructEstimateAndBroadcastTx(constructArg: ConstructArgument, estimateCallback: EstimateFunction, signers: SignerArgument, mode: BroadcastMode): Promise<TxResponse.AsObject> {
-        return this.getAndExecute(client => client.constructEstimateAndBroadcastTx(constructArg, estimateCallback, signers, mode));
+        return this.getAndExecuteAsync(async client => await client.constructEstimateAndBroadcastTx(constructArg, estimateCallback, signers, mode));
     }
 
     broadcastTx(baseReq: BaseRequest, gasEstimate: GasEstimate, mode: BroadcastMode): Promise<TxResponse.AsObject> {
-        return this.getAndExecute(client => client.broadcastTx(baseReq, gasEstimate, mode));
+        return this.getAndExecuteAsync(async client => await client.broadcastTx(baseReq, gasEstimate, mode));
     }
 
     estimateTx(baseReq: BaseRequest): Promise<GasEstimate> {
-        return this.getAndExecute(client => client.estimateTx(baseReq));
+        return this.getAndExecuteAsync(async client => await client.estimateTx(baseReq));
     }
 
     public get auth(): AuthCore {
