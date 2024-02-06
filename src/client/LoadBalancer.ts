@@ -59,17 +59,23 @@ export abstract class AbstractLoadBalancer<T> implements ILoadBalancer<T> {
         }
     }
 
-    // async getAndExecute<R>(fun: (record: T) => R): Promise<R> {
-    //     let record = this.get();
-    //     try {
-    //         let result = await fun(record);
-    //         this.handleSuccess(record);
-    //         return result;
-    //     } catch (e) { 
-    //         this.handleFailure(record, e);
-    //         throw e
-    //     }
-    // }
+    async getAndExecuteAsync<R>(fun: (record: T) => R): Promise<R> {
+        let record = this.get();
+        console.log("getAndExecuteAsync");
+        console.log(record);
+        try {
+            let result = await fun(record);
+            this.handleSuccess(record);
+            console.log("SUCCEEDED");
+            console.log(result);
+            return result;
+        } catch (e) { 
+            console.error("FAILED");
+            console.error(e);
+            this.handleFailure(record, e);
+            throw e
+        }
+    }
 }
 
 interface Failure {
