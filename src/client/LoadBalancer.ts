@@ -16,7 +16,7 @@ export interface ILoadBalancer<T> {
 
     getAndExecute<R>(fun: (record: T) => R): R
 
-    getAndExecuteAsync<R>(fun: (record: T) => R): Promise<R>
+    getAndExecuteAsync<R>(fun: (record: T) => Promise<R>): Promise<R>
 }
 
 interface LoadBalancerProps<T> {
@@ -60,16 +60,31 @@ export abstract class AbstractLoadBalancer<T> implements ILoadBalancer<T> {
         }
     }
 
-    async getAndExecuteAsync<R>(fun: (record: T) => R): Promise<R> {
+    async getAndExecuteAsync<R>(fun: (record: T) => Promise<R>): Promise<R> {
         let record = this.get();
         console.log("getAndExecuteAsync");
         console.log(record);
         try {
-            let result = await fun(record);
-            this.handleSuccess(record);
+            let result: R = await fun(record);
             console.log("SUCCEEDED");
             console.log(result);
-            return result;
+            try {
+                console.log(JSON.stringify(result));
+            } catch (e1) {
+                console.error("Failed to stringify result", e1);
+            }
+
+
+            let result2 = await result;
+            console.log("SUCCEEDED2");
+            console.log(result2);
+            try {
+                console.log(JSON.stringify(result2));
+            } catch (e1) {
+                console.error("Failed to stringify result2", e1);
+            }            
+            this.handleSuccess(record);
+            return result2;
         } catch (e) { 
             console.error("FAILED");
             console.error(e);
