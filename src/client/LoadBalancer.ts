@@ -77,8 +77,8 @@ interface FallbackLoadBalancerProps<T> extends LoadBalancerProps<T> {
 }
 export class FallbackLoadBalancer<T> extends AbstractLoadBalancer<T> {
     records: T[];
-    private failures: Failure[];
-    private backoff: BackoffStrategy;
+    protected failures: Failure[];
+    protected backoff: BackoffStrategy;
 
     constructor(props: FallbackLoadBalancerProps<T>) {
         super(props);
@@ -126,7 +126,7 @@ export class FallbackLoadBalancer<T> extends AbstractLoadBalancer<T> {
 
 export class RoundRobinLoadBalancer<T> extends AbstractLoadBalancer<T> {
     records: T[];
-    private nextIndex: number;
+    protected nextIndex: number;
 
     constructor(props: LoadBalancerProps<T>) {
         super(props);
