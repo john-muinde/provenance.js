@@ -97,13 +97,13 @@ export class FallbackLoadBalancer<T> extends AbstractLoadBalancer<T> {
     }
 
     handleSuccess(record: T) {
-        let failedRecordIndex = this.records.indexOf(record);
-        if (failedRecordIndex < 0) {
+        let succeededRecordIndex = this.records.indexOf(record);
+        if (succeededRecordIndex < 0) {
             return;
         }
 
-        this.failures[failedRecordIndex].errors = [];
-        this.failures[failedRecordIndex].nextAttemptEpochMillis = Date.now();
+        this.failures[succeededRecordIndex].errors = [];
+        this.failures[succeededRecordIndex].nextAttemptEpochMillis = 0;
     }
 
     handleFailure(record: T, e: Error) {
