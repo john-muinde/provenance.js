@@ -1,4 +1,4 @@
-import * as grpc from 'grpc';
+import * as grpc from '@grpc/grpc-js';
 
 import { 
     ITxClient,
@@ -17,7 +17,7 @@ export class MsgFeesModule {
     constructor(provider: IProvider, txClient: ITxClient) {
         this.provider = provider;
         this.txClient = txClient;
-        this.queryClient = new QueryClient(this.provider.network.uri.toString(), grpc.credentials.createInsecure());
+        this.queryClient = new QueryClient(this.provider.network.uri.toString(), provider.credentials);
     }
 
     //----------------------------------------------------------------------------------------------------------------------------------------------

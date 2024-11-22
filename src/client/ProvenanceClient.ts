@@ -1,5 +1,5 @@
 import * as google_protobuf_any_pb from 'google-protobuf/google/protobuf/any_pb';
-import * as grpc from 'grpc';
+import * as grpc from '@grpc/grpc-js';
 
 import { BaseRequest } from './BaseRequest';
 import { GasEstimate, SimulationGasEstimate } from './GasEstimate';
@@ -50,7 +50,7 @@ export class ProvenanceClient implements IPbClient {
         } else {
             this.gasPriceProvider = new DefaultGasPriceProvider();
         }
-        this.txClient = new ServiceClient(this.provider.network.uri.toString(), grpc.credentials.createInsecure());
+        this.txClient = new ServiceClient(this.provider.network.uri.toString(), this.provider.credentials);
 
         // core modules
         this.auth = new AuthCore(this.provider, this);
