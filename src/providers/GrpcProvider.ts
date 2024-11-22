@@ -1,4 +1,4 @@
-import { ChannelCredentials, credentials } from 'grpc';
+import { ChannelCredentials, credentials } from '@grpc/grpc-js';
 import { Network } from '../types/Network';
 import { IProvider } from "./IProvider";
 
