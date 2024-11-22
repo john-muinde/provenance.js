@@ -4,6 +4,8 @@ import { Network } from '../types/Network';
 export interface IProvider {
 
     readonly network: Network;
+    readonly isSecure: boolean;
     readonly credentials: ChannelCredentials;
 
+    generateCredentials(): ChannelCredentials
 }
