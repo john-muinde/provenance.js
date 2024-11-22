@@ -51,7 +51,6 @@ export class ProvenanceClient implements IPbClient {
             this.gasPriceProvider = new DefaultGasPriceProvider();
         }
         this.txClient = new ServiceClient(this.provider.network.uri.toString(), this.provider.credentials);
-        // this.txClient = new ServiceClient(this.provider.network.uri.toString(), this.provider.generateCredentials());
 
         // core modules
         this.auth = new AuthCore(this.provider, this);

@@ -28,7 +28,6 @@ export class WasmCore {
         this.provider = provider;
         this.txClient = txClient;
         this.queryClient = new QueryClient(this.provider.network.uri.toString(), provider.credentials);
-        // this.queryClient = new QueryClient(this.provider.network.uri.toString(), provider.generateCredentials());
     }
 
     //----------------------------------------------------------------------------------------------------------------------------------------------

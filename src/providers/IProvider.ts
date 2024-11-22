@@ -6,6 +6,4 @@ export interface IProvider {
     readonly network: Network;
     readonly isSecure: boolean;
     readonly credentials: ChannelCredentials;
-
-    generateCredentials(): ChannelCredentials
 }

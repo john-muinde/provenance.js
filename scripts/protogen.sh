@@ -9,8 +9,6 @@ INDIR=${1}
 INCDIR=${2}
 OUTDIR=${3}
 
-echo "grpc_js:${OUTDIR}"
-
 npx grpc_tools_node_protoc \
   --js_out=import_style=commonjs,binary:"${OUTDIR}" \
   --grpc_out="grpc_js:${OUTDIR}" \
