@@ -23,7 +23,8 @@ export class BankCore {
     constructor(provider: IProvider, txClient: ITxClient) {
         this.provider = provider;
         this.txClient = txClient;
-        this.queryClient = new QueryClient(this.provider.network.uri.toString(), grpc.credentials.createInsecure());
+        this.queryClient = new QueryClient(this.provider.network.uri.toString(), provider.credentials);
+        // this.queryClient = new QueryClient(this.provider.network.uri.toString(), grpc.credentials.createInsecure());
     }
 
     //----------------------------------------------------------------------------------------------------------------------------------------------
