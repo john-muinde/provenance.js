@@ -20,6 +20,9 @@ ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/tendermint/crypto ${PROTO_DIR} ${PROTO_OU
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/tendermint/types ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/tendermint/version ${PROTO_DIR} ${PROTO_OUT_DIR}
 
+# Third-party protos: Amino
+${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/amino ${PROTO_DIR} ${PROTO_OUT_DIR}
+
 # Third-party protos: Cosmos
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos_proto ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/auth/v1beta1 ${PROTO_DIR} ${PROTO_OUT_DIR}
@@ -29,6 +32,8 @@ ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/base/query/v1beta1 ${PROTO_DIR} ${
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/base/v1beta1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/crypto/multisig/v1beta1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/crypto/secp256k1 ${PROTO_DIR} ${PROTO_OUT_DIR}
+${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/msg/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}
+${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/offchain ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/tx/signing/v1beta1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/tx/v1beta1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 
