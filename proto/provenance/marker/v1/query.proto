@@ -1,6 +1,7 @@
 syntax = "proto3";
 package provenance.marker.v1;
 
+import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
@@ -55,6 +56,16 @@ service Query {
   // query for access records on an account
   rpc DenomMetadata(QueryDenomMetadataRequest) returns (QueryDenomMetadataResponse) {
     option (google.api.http).get = "/provenance/marker/v1/getdenommetadata/{denom}";
+  }
+
+  // query for account data associated with a denom
+  rpc AccountData(QueryAccountDataRequest) returns (QueryAccountDataResponse) {
+    option (google.api.http).get = "/provenance/marker/v1/accountdata/{denom}";
+  }
+
+  // NetAssetValues returns net asset values for marker
+  rpc NetAssetValues(QueryNetAssetValuesRequest) returns (QueryNetAssetValuesResponse) {
+    option (google.api.http).get = "/provenance/marker/v1/netassetvalues/{id}";
   }
 }
 
@@ -123,8 +134,12 @@ message QueryEscrowRequest {
 }
 // QueryEscrowResponse is the response type for the Query/MarkerEscrow method.
 message QueryEscrowResponse {
-  repeated cosmos.base.v1beta1.Coin escrow = 1
-      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
+  repeated cosmos.base.v1beta1.Coin escrow = 1 [
+    (gogoproto.nullable)     = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty)   = true,
+    (amino.encoding)         = "legacy_coins"
+  ];
 }
 
 // QueryAccessRequest is the request type for the Query/MarkerAccess method.
@@ -146,6 +161,17 @@ message QueryDenomMetadataResponse {
   cosmos.bank.v1beta1.Metadata metadata = 1 [(gogoproto.nullable) = false];
 }
 
+// QueryAccountDataRequest is the request type for the Query/AccountData
+message QueryAccountDataRequest {
+  // The denomination to look up.
+  string denom = 1;
+}
+// QueryAccountDataResponse is the response type for the Query/AccountData
+message QueryAccountDataResponse {
+  // The accountdata for the requested denom.
+  string value = 1;
+}
+
 // Balance defines an account address and balance pair used in queries for accounts holding a marker
 message Balance {
   option (gogoproto.equal)           = false;
@@ -155,6 +181,22 @@ message Balance {
   string address = 1;
 
   // coins defines the different coins this balance holds.
-  repeated cosmos.base.v1beta1.Coin coins = 2
-      [(gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins", (gogoproto.nullable) = false];
+  repeated cosmos.base.v1beta1.Coin coins = 2 [
+    (gogoproto.nullable)     = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (amino.dont_omitempty)   = true,
+    (amino.encoding)         = "legacy_coins"
+  ];
+}
+
+// QueryNetAssetValuesRequest is the request type for the Query/NetAssetValues method.
+message QueryNetAssetValuesRequest {
+  // address or denom for the marker
+  string id = 1;
+}
+
+// QueryNetAssetValuesRequest is the response type for the Query/NetAssetValues method.
+message QueryNetAssetValuesResponse {
+  // net asset values for marker denom
+  repeated NetAssetValue net_asset_values = 1 [(gogoproto.nullable) = false];
 }

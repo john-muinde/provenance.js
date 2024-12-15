@@ -34,11 +34,16 @@ ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/crypto/multisig/v1beta1 ${PROTO_DI
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/crypto/secp256k1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/msg/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/offchain ${PROTO_DIR} ${PROTO_OUT_DIR}
+${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/query/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/tx/signing/v1beta1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmos/tx/v1beta1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 
 # Third-party protos: Cosmoswasm
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/cosmwasm/wasm/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}
+
+# Third-party protos: IBC
+${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/ibc/applications/transfer/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}
+${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/ibc/core/client/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}
 
 # Provenance protos
 ${SCRIPT_DIR}/protogen.sh ${PROTO_DIR}/provenance/attribute/v1 ${PROTO_DIR} ${PROTO_OUT_DIR}
