@@ -1,0 +1,30 @@
+import { Message, ITxClient } from '../../client';
+import { IProvider } from '../../providers/IProvider';
+import { AccessGrant, Balance, Coin, MarkerAccount, MarkerStatus, MarkerType, DenomMetadata } from '../../types';
+import { IQueryClient } from '../../proto/provenance/marker/v1/query_grpc_pb';
+import * as provenance_marker_v1_pb from '../../proto/provenance/marker/v1/marker_pb';
+export declare class MarkerModule {
+    constructor(provider: IProvider, txClient: ITxClient);
+    getAllMarkers(status?: provenance_marker_v1_pb.MarkerStatus): Promise<MarkerAccount[]>;
+    getMarker(denom: string): Promise<MarkerAccount>;
+    getAllAccountsHoldingMarker(denom: string): Promise<Balance[]>;
+    getTotalSupply(denom: string): Promise<Coin>;
+    getCoinsInEscrow(denom: string): Promise<Coin[]>;
+    getAccessGrantsForMarker(denom: string): Promise<AccessGrant[]>;
+    getMetadata(denom: string): Promise<DenomMetadata>;
+    finalize(denom: string, admin: string): Message;
+    activate(denom: string, admin: string): Message;
+    cancel(denom: string, admin: string): Message;
+    delete(denom: string, admin: string): Message;
+    mint(coin: Coin, admin: string): Message;
+    burn(coin: Coin, admin: string): Message;
+    addAccess(denom: string, accessList: AccessGrant[], admin: string): Message;
+    deleteAccess(denom: string, addr: string, admin: string): Message;
+    withdraw(denom: string, to: string, amountList: Coin[], admin: string): Message;
+    addMarker(coin: Coin, from: string, type: MarkerType, status: MarkerStatus, accessList: AccessGrant[], allowGovernance: boolean, fixedSupply: boolean, manager: string): Message;
+    transfer(coin: Coin, from: string, to: string, admin: string): Message;
+    setMetadata(metadata: DenomMetadata, admin: string): Message;
+    protected readonly provider: IProvider;
+    protected readonly txClient: ITxClient;
+    protected readonly queryClient: IQueryClient;
+}
